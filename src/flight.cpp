@@ -1,4 +1,5 @@
 #include "flight.h"
+
 #include "ui_flight.h"
 
 Flight::Flight(FlightData flightData, CrewData crewData, QWidget *parent)
