@@ -1,7 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QCompleter>
 #include <QMainWindow>
+#include <QRegularExpressionValidator>
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -18,8 +20,22 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_departureCityLEdit_textEdited(const QString &departureCity);
+
+    void on_arrivalCityLEdit_textEdited(const QString &arrivalCity);
+
+    void on_changeTBtn_clicked();
+
+    void on_backFlightChk_stateChanged(int state);
+
+    void on_searchPBtn_clicked();
+
 private:
     Ui::MainWindow *ui;
+
+    QRegularExpressionValidator *validator;
+    QCompleter *completer;
 };
 
 #endif // MAINWINDOW_H
