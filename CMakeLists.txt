@@ -15,18 +15,21 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 include_directories(inc)
 set(PROJECT_INC
     inc/mainwindow.h
+    inc/dbsettings.h
     inc/flight.h
 )
 
 set(PROJECT_SRC
     src/main.cpp
     src/mainwindow.cpp
+    src/dbsettings.cpp
     src/flight.cpp
 )
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ui)
 set(PROJECT_UI
     ui/mainwindow.ui
+    ui/dbsettings.ui
     ui/flight.ui
 )
 
