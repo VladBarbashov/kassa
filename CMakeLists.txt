@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
-include_directories(inc)
+include_directories(inc/ dbmanager/inc/)
 set(PROJECT_INC
     inc/mainwindow.h
     inc/dbsettings.h
@@ -62,8 +62,11 @@ else()
     endif()
 endif()
 
+add_subdirectory(dbmanager/)
+
 target_link_libraries(kassa
     PRIVATE Qt${QT_VERSION_MAJOR}::Widgets
+    PRIVATE dbmanager
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
