@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 
+#include <QStringListModel>
+
 #include "dbsettings.h"
 #include "ui_mainwindow.h"
 
@@ -37,12 +39,30 @@ void MainWindow::on_dbSettingsAct_triggered()
 
 void MainWindow::on_departureCityLEdit_textEdited(const QString &departureCity)
 {
-
+    if (dbManager && (dbManager->connectionState() == db::DBState::OK))
+    {
+        dbManager->performQuery(std::format("SELECT departureCity FROM flights WHERE departureCity LIKE '{}%' ORDER BY departureCity", departureCity.toStdString()).c_str());
+        QStringList list;
+        for (auto &i : dbManager->fields(0))
+        {
+            list << i.toString();
+        }
+        completer->setModel(new QStringListModel(list, completer));
+    }
 }
 
 void MainWindow::on_arrivalCityLEdit_textEdited(const QString &arrivalCity)
 {
-
+    if (dbManager && (dbManager->connectionState() == db::DBState::OK))
+    {
+        dbManager->performQuery(std::format("SELECT arrivalCity FROM flights WHERE arrivalCity LIKE '{}%' ORDER BY arrivalCity", arrivalCity.toStdString()).c_str());
+        QStringList list;
+        for (auto &i : dbManager->fields(0))
+        {
+            list << i.toString();
+        }
+        completer->setModel(new QStringListModel(list, completer));
+    }
 }
 
 void MainWindow::on_changeTBtn_clicked()
