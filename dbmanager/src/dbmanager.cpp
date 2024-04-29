@@ -208,8 +208,10 @@ db::DBRes db::DBManager::checkConnection(const QString &connectionName, const QS
 void db::DBManager::clearConnections()
 {
     closeActiveConnection();
-    for (auto &i : connections)
+    auto it = connections.cbegin();
+    while (it != connections.cend())
     {
-        removeConnection(i);
+        removeConnection(*it);
+        it = connections.cbegin();
     }
 }
