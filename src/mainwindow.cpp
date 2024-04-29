@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 
+#include "dbsettings.h"
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -7,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
     , validator (new QRegularExpressionValidator(QRegularExpression("[А-я]{1,20}"), this))
     , completer (new QCompleter)
+    , dbManager (new db::DBManager("main", "127.0.0.1", "vladislav", "8239", "flights"))
 {
     ui->setupUi(this);
     ui->backFlightDEdit->setVisible(false);
@@ -24,6 +26,13 @@ MainWindow::~MainWindow()
     delete ui;
     delete validator;
     delete completer;
+    delete dbManager;
+}
+
+void MainWindow::on_dbSettingsAct_triggered()
+{
+    DBSettings *dbWindow = new DBSettings(dbManager, this);
+    dbWindow->show();
 }
 
 void MainWindow::on_departureCityLEdit_textEdited(const QString &departureCity)

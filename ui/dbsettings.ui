@@ -82,7 +82,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>localhost</string>
+        <string>127.0.0.1</string>
        </property>
       </widget>
      </item>

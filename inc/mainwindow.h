@@ -5,6 +5,8 @@
 #include <QMainWindow>
 #include <QRegularExpressionValidator>
 
+#include "dbmanager.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui
 {
@@ -21,6 +23,8 @@ public:
     ~MainWindow();
 
 private slots:
+    void on_dbSettingsAct_triggered();
+
     void on_departureCityLEdit_textEdited(const QString &departureCity);
 
     void on_arrivalCityLEdit_textEdited(const QString &arrivalCity);
@@ -36,6 +40,8 @@ private:
 
     QRegularExpressionValidator *validator;
     QCompleter *completer;
+
+    db::DBManager *dbManager;
 };
 
 #endif // MAINWINDOW_H

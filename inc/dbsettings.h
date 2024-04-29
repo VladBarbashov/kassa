@@ -2,6 +2,9 @@
 #define DBSETTINGS_H
 
 #include <QDialog>
+#include <QRegularExpressionValidator>
+
+#include "dbmanager.h"
 
 namespace Ui
 {
@@ -13,7 +16,7 @@ class DBSettings : public QDialog
     Q_OBJECT
 
 public:
-    explicit DBSettings(QWidget *parent = nullptr);
+    explicit DBSettings(db::DBManager *dbManager, QWidget *parent = nullptr);
     ~DBSettings();
 
 private slots:
@@ -22,6 +25,10 @@ private slots:
 
 private:
     Ui::DBSettings *ui;
+
+    QRegularExpressionValidator *validator;
+
+    db::DBManager *dbManager;
 };
 
 #endif // DBSETTINGS_H
