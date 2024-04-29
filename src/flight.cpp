@@ -15,7 +15,7 @@ Flight::Flight(FlightData flightData, CrewData crewData, QWidget *parent)
     ui->arrivalTimeDTEdit->setDateTime(flightData.arrivalTime);
     ui->planeLbl->setText(flightData.planeType);
     ui->flightClassLbl->setText(flightData.flightClass);
-    ui->costPBtn->setText(QString(flightData.cost));
+    ui->costPBtn->setText(QString::number(flightData.cost));
 }
 
 Flight::~Flight()
