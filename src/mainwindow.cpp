@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 
 #include <QLayoutItem>
+#include <QMessageBox>
 #include <QStringListModel>
 
 #include "dbsettings.h"
@@ -84,14 +85,13 @@ void MainWindow::on_backFlightChk_stateChanged(int state)
 void MainWindow::on_searchPBtn_clicked()
 {
     clearLayt(ui->flightsLayt);
-    if (dbManager)
+    if (dbManager && (dbManager->performQuery(std::format("SELECT f.flightNumber, f.departureCity, f.arrivalCity, f.departureTime, f.arrivalTime, f.planeType, fc.class, c.price "
+                    "FROM flights AS f JOIN cost AS c ON f.flightNumber=c.flightNumber JOIN crew AS cr ON f.flightNumber=cr.flightNumber JOIN flightClasses AS fc ON c.classId=fc.classId "
+                    "WHERE f.departureCity='{}' AND f.arrivalCity='{}' AND f.departureTime LIKE '{}%' AND fc.class='{}' "
+                    "ORDER BY f.departureCity"
+                    , ui->departureCityLEdit->text().toStdString(), ui->arrivalCityLEdit->text().toStdString()
+                    , ui->departureDateDEdit->date().toString(Qt::DateFormat::ISODate).toStdString(), ui->flightClassCmb->currentText().toStdString()).c_str()) == db::QueryRes::OK))
     {
-        dbManager->performQuery(std::format("SELECT f.flightNumber, f.departureCity, f.arrivalCity, f.departureTime, f.arrivalTime, f.planeType, fc.class, c.price "
-                                            "FROM flights AS f JOIN cost AS c ON f.flightNumber=c.flightNumber JOIN crew AS cr ON f.flightNumber=cr.flightNumber JOIN flightClasses AS fc ON c.classId=fc.classId "
-                                            "WHERE f.departureCity='{}' AND f.arrivalCity='{}' AND f.departureTime LIKE '{}%' AND fc.class='{}' "
-                                            "ORDER BY f.departureCity"
-                                            , ui->departureCityLEdit->text().toStdString(), ui->arrivalCityLEdit->text().toStdString()
-                                            , ui->departureDateDEdit->date().toString(Qt::DateFormat::ISODate).toStdString(), ui->flightClassCmb->currentText().toStdString()).c_str());
         QList<QVariant> result = dbManager->nextRow();
         while (!result.empty())
         {
@@ -100,6 +100,10 @@ void MainWindow::on_searchPBtn_clicked()
             ui->flightsLayt->addWidget(new Flight(flightData, crewData), 0, Qt::AlignTop);
             result = dbManager->nextRow();
         }
+    }
+    else
+    {
+        QMessageBox::warning(this, "Ошибка подключения", "Отсутствует подключение к базе данных (настройка в меню -> настройки бд)");
     }
 }
 
