@@ -9,7 +9,7 @@
 #define POSTGRES_INDEX 1
 #define SQLITE_INDEX 2
 
-DBSettings::DBSettings(db::DBManager *dbManager, QWidget *parent)
+DBSettings::DBSettings(db::DBManager *&dbManager, QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::DBSettings)
     , dbManager(dbManager)

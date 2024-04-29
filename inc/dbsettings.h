@@ -16,7 +16,7 @@ class DBSettings : public QDialog
     Q_OBJECT
 
 public:
-    explicit DBSettings(db::DBManager *dbManager, QWidget *parent = nullptr);
+    explicit DBSettings(db::DBManager *&dbManager, QWidget *parent = nullptr);
     ~DBSettings();
 
 private slots:
@@ -28,7 +28,7 @@ private:
 
     QRegularExpressionValidator *validator;
 
-    db::DBManager *dbManager;
+    db::DBManager *&dbManager;
 };
 
 #endif // DBSETTINGS_H
