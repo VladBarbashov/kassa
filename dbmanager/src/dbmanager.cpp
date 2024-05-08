@@ -4,15 +4,20 @@
 
 db::DBManager::DBManager() {}
 
-db::DBManager::DBManager(const QString &connectionName, const QString &host, const QString &user, const QString &passwd, const QString &dbName, db::DBDriver driver)
+db::DBManager::DBManager(const QString &connectionName, const QString &host, const QString &user,
+                         const QString &passwd, const QString &dbName, db::DBDriver driver)
 {
     addNewConnection(connectionName, host, user, passwd, dbName, driver);
     setActiveConnection(connectionName);
 }
 
-db::DBManager::DBManager(const db::DBManager &other) : activeConnection(other.activeConnection), connections(other.connections) {}
+db::DBManager::DBManager(const db::DBManager &other)
+    : activeConnection(other.activeConnection)
+    , connections(other.connections) {}
 
-db::DBManager::DBManager(db::DBManager &&other) : activeConnection(std::move(other.activeConnection)), connections(std::move(other.connections)) {}
+db::DBManager::DBManager(db::DBManager &&other)
+    : activeConnection(std::move(other.activeConnection))
+    , connections(std::move(other.connections)) {}
 
 db::DBManager &db::DBManager::operator=(const db::DBManager &other)
 {
@@ -41,7 +46,8 @@ db::DBManager::~DBManager()
     clearConnections();
 }
 
-db::DBRes db::DBManager::addNewConnection(const QString &connectionName, const QString &host, const QString &user, const QString &passwd, const QString &dbName, db::DBDriver driver)
+db::DBRes db::DBManager::addNewConnection(const QString &connectionName, const QString &host, const QString &user,
+                                          const QString &passwd, const QString &dbName, db::DBDriver driver)
 {
     switch (checkConnection(connectionName, host, user, passwd, dbName, driver))
     {
@@ -73,12 +79,11 @@ db::DBRes db::DBManager::removeConnection(const QString &connectionName)
 {
     if (connections.contains(connectionName))
     {
-        QSqlDatabase qdb = QSqlDatabase::database(connectionName, false);
         if (activeConnection == connectionName)
         {
             closeActiveConnection();
         }
-        if (!qdb.isOpen())
+        if (!QSqlDatabase::database(connectionName, false).isOpen())
         {
             QSqlDatabase::removeDatabase(connectionName);
         }
@@ -92,13 +97,17 @@ db::DBRes db::DBManager::setActiveConnection(const QString &connectionName)
 {
     if (connections.contains(connectionName))
     {
-        closeActiveConnection();
-        activeConnection = connectionName;
-        if (QSqlDatabase::database(activeConnection, false).open())
+        if (activeConnection != connectionName)
         {
-            return db::DBRes::OK;
+            closeActiveConnection();
+            activeConnection = connectionName;
+            if (QSqlDatabase::database(activeConnection, false).open())
+            {
+                return db::DBRes::OK;
+            }
+            return db::DBRes::ERROR;
         }
-        return db::DBRes::ERROR;
+        return db::DBRes::DUBLICATE_ENTRY;
     }
     return db::DBRes::NO_ENTRY;
 }
@@ -128,12 +137,20 @@ db::DBState db::DBManager::connectionState() const
     return db::DBState::NO_CONNECTION;
 }
 
-db::QueryRes db::DBManager::performQuery(const QString &query)
+db::QueryRes db::DBManager::performQuery(const QString &query, const QList<QVariant> &args) const
 {
     if (connectionState() == db::DBState::OK)
     {
-        delete queryManager;
-        queryManager = new QSqlQuery(query, QSqlDatabase::database(activeConnection, false));
+        if (!queryManager)
+        {
+            queryManager = new QSqlQuery(QSqlDatabase::database(activeConnection, false));
+        }
+        queryManager->prepare(query);
+        for (auto &i : args)
+        {
+            queryManager->addBindValue(i);
+        }
+        queryManager->exec();
         if (queryManager->isActive())
         {
             if (queryManager->size())
@@ -146,7 +163,7 @@ db::QueryRes db::DBManager::performQuery(const QString &query)
     return db::QueryRes::ERROR;
 }
 
-QList<QVariant> db::DBManager::nextRow()
+QList<QVariant> db::DBManager::nextRow() const
 {
     QList<QVariant> list;
     if (queryManager && queryManager->next())
@@ -159,7 +176,7 @@ QList<QVariant> db::DBManager::nextRow()
     return list;
 }
 
-QList<QVariant> db::DBManager::fields(unsigned int column)
+QList<QVariant> db::DBManager::fields(unsigned int column) const
 {
     QList<QVariant> list;
     if (queryManager)
@@ -177,22 +194,24 @@ QString db::DBManager::getDriver(db::DBDriver driver) const
     switch (driver)
     {
     case db::DBDriver::MYSQL:
-        return QString("QMYSQL");
+        return "QMYSQL";
     case db::DBDriver::POSTGRES:
-        return QString("QPSQL");
+        return "QPSQL";
     case db::DBDriver::SQLITE:
-        return QString("QSQLITE");
+        return "QSQLITE";
     default:
         return QString();
     }
 }
 
-db::DBRes db::DBManager::checkConnection(const QString &connectionName, const QString &host, const QString &user, const QString &passwd, const QString &dbName, db::DBDriver driver) const
+db::DBRes db::DBManager::checkConnection(const QString &connectionName, const QString &host, const QString &user,
+                                         const QString &passwd, const QString &dbName, db::DBDriver driver) const
 {
     if (QSqlDatabase::contains(connectionName))
     {
         QSqlDatabase qdb = QSqlDatabase::database(connectionName, false);
-        if ((qdb.hostName() == host) && (qdb.userName() == user) && (qdb.password() == passwd) && (qdb.databaseName() == dbName) && (qdb.driverName() == getDriver(driver)))
+        if ((qdb.hostName() == host) && (qdb.userName() == user) && (qdb.password() == passwd) &&
+            (qdb.databaseName() == dbName) && (qdb.driverName() == getDriver(driver)))
         {
             return db::DBRes::OK;
         }

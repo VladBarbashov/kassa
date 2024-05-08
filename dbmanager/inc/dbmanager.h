@@ -32,9 +32,9 @@ public:
     db::DBRes closeActiveConnection();
     db::DBState connectionState() const;
 
-    db::QueryRes performQuery(const QString &query);
-    QList<QVariant> nextRow();
-    QList<QVariant> fields(unsigned int column);
+    db::QueryRes performQuery(const QString &query, const QList<QVariant> &args) const;
+    QList<QVariant> nextRow() const;
+    QList<QVariant> fields(unsigned int column) const;
 
 private:
     QString getDriver(DBDriver driver) const;
@@ -44,7 +44,7 @@ private:
     void clearConnections();
 
     QString activeConnection;
-    QSqlQuery *queryManager;
+    mutable QSqlQuery *queryManager;
 
     QSet<QString> connections;
 };
