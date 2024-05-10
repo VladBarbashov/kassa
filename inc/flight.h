@@ -62,7 +62,7 @@ public:
         QString flightAttendant;
     };
 
-    explicit Flight(FlightData flightData, CrewData crewData, QWidget *parent = nullptr);
+    explicit Flight(const FlightData &flightData, const CrewData &crewData, QWidget *parent = nullptr);
 
     ~Flight();
 

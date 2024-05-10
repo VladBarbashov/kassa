@@ -2,7 +2,7 @@
 
 #include "ui_flight.h"
 
-Flight::Flight(FlightData flightData, CrewData crewData, QWidget *parent)
+Flight::Flight(const FlightData &flightData, const CrewData &crewData, QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Flight)
 {
