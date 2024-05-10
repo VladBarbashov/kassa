@@ -117,6 +117,7 @@ db::DBRes db::DBManager::closeActiveConnection()
     if (!activeConnection.isEmpty())
     {
         delete queryManager;
+        queryManager = nullptr;
         QSqlDatabase::database(activeConnection, false).close();
         activeConnection.clear();
         return db::DBRes::OK;
