@@ -9,7 +9,7 @@
 #define POSTGRES_INDEX 1
 #define SQLITE_INDEX 2
 
-DBSettings::DBSettings(db::DBManager *&dbManager, QWidget *parent)
+DBSettings::DBSettings(db::DBManager *dbManager, QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::DBSettings)
     , dbManager(dbManager)
@@ -17,10 +17,10 @@ DBSettings::DBSettings(db::DBManager *&dbManager, QWidget *parent)
     ui->setupUi(this);
 
     QString ipRange = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])";
-    QRegularExpression ipRegex ("^" + ipRange
-                    + "\\." + ipRange
-                    + "\\." + ipRange
-                    + "\\." + ipRange + "$");
+    QRegularExpression ipRegex ("^" + ipRange +
+                                "\\." + ipRange +
+                                "\\." + ipRange +
+                                "\\." + ipRange + "$");
     validator = new QRegularExpressionValidator(ipRegex, this);
     ui->ipLEdit->setValidator(validator);
 }
@@ -49,8 +49,15 @@ void DBSettings::on_resultDBtnBox_accepted()
         QMessageBox::warning(this, "Ошибка", "Драйвер недоступен");
         return;
     }
-    delete dbManager;
-    dbManager = new db::DBManager("main", ui->ipLEdit->text(), ui->userLEdit->text(), ui->passwdLEdit->text(), ui->dbNameLEdit->text(), driver);
+    if (dbManager)
+    {
+        dbManager->removeConnection("main");
+        dbManager->addNewConnection("main", ui->ipLEdit->text(), ui->userLEdit->text(), ui->passwdLEdit->text(), ui->dbNameLEdit->text(), driver);
+    }
+    else
+    {
+        QMessageBox::warning(this, "Ошибка", "Менеджер баз данных недоступен");
+    }
     this->close();
 }
 
