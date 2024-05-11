@@ -1,6 +1,7 @@
 #include "dbsettings.h"
 
 #include <QMessageBox>
+#include <QRegularExpressionValidator>
 #include <QString>
 
 #include "ui_dbsettings.h"
@@ -21,14 +22,13 @@ DBSettings::DBSettings(db::DBManager *dbManager, QWidget *parent)
                                 "\\." + ipRange +
                                 "\\." + ipRange +
                                 "\\." + ipRange + "$");
-    validator = new QRegularExpressionValidator(ipRegex, this);
+    QRegularExpressionValidator *validator = new QRegularExpressionValidator(ipRegex, this);
     ui->ipLEdit->setValidator(validator);
 }
 
 DBSettings::~DBSettings()
 {
     delete ui;
-    delete validator;
 }
 
 void DBSettings::on_resultDBtnBox_accepted()
