@@ -53,6 +53,7 @@ void DBSettings::on_resultDBtnBox_accepted()
     {
         dbManager->removeConnection("main");
         dbManager->addNewConnection("main", ui->ipLEdit->text(), ui->userLEdit->text(), ui->passwdLEdit->text(), ui->dbNameLEdit->text(), driver);
+        dbManager->setActiveConnection("main");
     }
     else
     {
