@@ -18,6 +18,9 @@ public:
     explicit DBSettings(db::DBManager *dbManager, QWidget *parent = nullptr);
     ~DBSettings();
 
+signals:
+    void backToMainWindow();
+
 private slots:
     void on_resultDBtnBox_accepted();
     void on_resultDBtnBox_rejected();

@@ -59,9 +59,11 @@ void DBSettings::on_resultDBtnBox_accepted()
         QMessageBox::warning(this, "Ошибка", "Менеджер баз данных недоступен");
     }
     this->close();
+    emit backToMainWindow();
 }
 
 void DBSettings::on_resultDBtnBox_rejected()
 {
     this->close();
+    emit backToMainWindow();
 }
