@@ -44,7 +44,7 @@ private:
     void clearConnections();
 
     QString activeConnection;
-    mutable QSqlQuery *queryManager;
+    mutable QSqlQuery *queryManager = nullptr;
 
     QSet<QString> connections;
 };
