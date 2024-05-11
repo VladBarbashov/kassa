@@ -16,6 +16,13 @@ class Flight : public QWidget
     Q_OBJECT
 
 public:
+    struct FlightData;
+    struct CrewData;
+
+    explicit Flight(const FlightData &flightData, const CrewData &crewData, QWidget *parent = nullptr);
+
+    ~Flight();
+
     struct FlightData
     {
         FlightData(const QList<QVariant> &list)
@@ -32,6 +39,11 @@ public:
                 cost = list.at(7).toInt();
             }
         }
+        FlightData(const FlightData &other) = default;
+        FlightData(FlightData &&other) = default;
+
+        FlightData &operator=(const FlightData &other) = default;
+        FlightData &operator=(FlightData &&other) = default;
 
         QString flightNumber;
         QString departureCity;
@@ -55,16 +67,17 @@ public:
                 flightAttendant = list.at(3).toString();
             }
         }
+        CrewData(const CrewData &other) = default;
+        CrewData(CrewData &&other) = default;
+
+        CrewData &operator=(const CrewData &other) = default;
+        CrewData &operator=(CrewData &&other) = default;
 
         QString firstPilot;
         QString secondPilot;
         QString purser;
         QString flightAttendant;
     };
-
-    explicit Flight(const FlightData &flightData, const CrewData &crewData, QWidget *parent = nullptr);
-
-    ~Flight();
 
 private:
     Ui::Flight *ui;
