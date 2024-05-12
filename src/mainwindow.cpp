@@ -92,7 +92,7 @@ void MainWindow::on_backFlightChk_stateChanged(int state)
 void MainWindow::on_searchPBtn_clicked()
 {
     clearLayt(ui->flightsLayt);
-    if (dbManager)
+    if (dbManager && (dbManager->connectionState() == db::DBState::OK))
     {
         if (dbManager->performQuery("SELECT f.flightNumber, f.departureCity, f.arrivalCity, f.departureTime, f.arrivalTime, f.planeType, fc.class, c.price "
                                     "FROM flights AS f JOIN cost AS c ON f.flightNumber=c.flightNumber JOIN crew AS cr ON f.flightNumber=cr.flightNumber "
